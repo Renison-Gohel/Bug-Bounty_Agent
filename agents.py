@@ -30,6 +30,13 @@ def get_llm(provider: str, model_name: str, base_url: str = None, api_key: str =
             model=model_name,
             temperature=temp
         )
+    elif provider == "openrouter":
+        return ChatOpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=api_key or os.getenv("OPENROUTER_API_KEY"),
+            model=model_name,
+            temperature=0
+        )
     elif provider == "gemini":
         return ChatGoogleGenerativeAI(
             google_api_key=api_key or os.getenv("GOOGLE_API_KEY"),
@@ -54,6 +61,7 @@ You should:
 4. Think deeply about potential attack vectors (SQLi, XSS, RCE, IDOR, etc.).
 
 When you have found a vulnerability, provide a detailed description including file paths, code snippets, and why it is vulnerable.
+If you have explored the target thoroughly and found NO vulnerabilities, state that clearly and stop. Do not loop indefinitely.
 """
 
 poc_system_message = """You are an expert Exploit Developer and Python Coder.
@@ -67,6 +75,7 @@ You should:
 5. If it fails, read the error, fix the script, and try again.
 
 When you have successfully created and verified the PoC, confirm it.
+If you cannot create a PoC after multiple attempts, explain why and stop.
 """
 
 def create_agents(config: dict):

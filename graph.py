@@ -17,27 +17,40 @@ def create_graph(researcher_agent, poc_agent):
         
         # Invoke the researcher graph
         # It expects a list of messages or a string which converts to a HumanMessage
-        result = researcher_agent.invoke({"messages": [HumanMessage(content=f"Analyze this target: {target}")]})
+        # Invoke the researcher graph with higher recursion limit
+        result = researcher_agent.invoke(
+            {"messages": [HumanMessage(content=f"Analyze this target: {target}")]},
+            config={"recursion_limit": 100}
+        )
         
-        # Result is the final state of the agent graph
+        # Capture full history
         messages = result["messages"]
+        # Convert messages to string format for state
+        history = [f"{m.type}: {m.content}" for m in messages]
+        
         last_message = messages[-1]
         findings = last_message.content
         
-        return {"findings": findings}
+        # Return findings and append history
+        return {"findings": findings, "messages": history}
 
     def poc_node(state: AgentState):
         findings = state["findings"]
         print(f"--- PoC Creator Working on findings ---")
         
-        # Invoke the PoC graph
-        result = poc_agent.invoke({"messages": [HumanMessage(content=f"Create a PoC for these findings: {findings}")]})
+        # Invoke the PoC graph with higher recursion limit
+        result = poc_agent.invoke(
+            {"messages": [HumanMessage(content=f"Create a PoC for these findings: {findings}")]},
+            config={"recursion_limit": 100}
+        )
         
         messages = result["messages"]
+        history = [f"{m.type}: {m.content}" for m in messages]
+        
         last_message = messages[-1]
         poc_status = last_message.content
         
-        return {"poc_status": poc_status}
+        return {"poc_status": poc_status, "messages": history}
 
     def should_create_poc(state: AgentState):
         findings = state["findings"].lower()

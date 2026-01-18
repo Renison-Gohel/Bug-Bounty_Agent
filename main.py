@@ -22,7 +22,7 @@ def render_agent_config(agent_name, key_prefix):
     st.sidebar.subheader(f"{agent_name} Settings")
     provider = st.sidebar.selectbox(
         "Provider", 
-        ["Ollama", "OpenAI", "Gemini"], 
+        ["Ollama", "OpenAI", "OpenRouter", "Gemini"], 
         key=f"{key_prefix}_provider"
     )
     
@@ -46,6 +46,13 @@ def render_agent_config(agent_name, key_prefix):
             "API Key", 
             type="password", 
             value=os.getenv("OPENAI_API_KEY", ""),
+            key=f"{key_prefix}_key"
+        )
+    elif provider == "OpenRouter":
+        api_key = st.sidebar.text_input(
+            "API Key", 
+            type="password", 
+            value=os.getenv("OPENROUTER_API_KEY", ""),
             key=f"{key_prefix}_key"
         )
     elif provider == "Gemini":
@@ -101,6 +108,11 @@ if st.button("Start Scan"):
                 
                 st.success("Analysis Complete!")
                 
+                # Show detailed logs
+                with st.expander("View Detailed Execution Logs"):
+                    for msg in final_state.get("messages", []):
+                        st.text(msg)
+
                 st.subheader("🔍 Researcher Findings")
                 st.write(final_state.get("findings", "No findings returned."))
                 

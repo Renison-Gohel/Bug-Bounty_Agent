@@ -1,0 +1,20 @@
+[project]
+name = "bug-bounty-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bandit>=1.9.2",
+    "langchain==0.3.0",
+    "langchain-community==0.3.0",
+    "langchain-core==0.3.0",
+    "langchain-google-genai==2.0.0",
+    "langchain-openai==0.2.0",
+    "langgraph>=0.2.40",
+    "playwright>=1.57.0",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.2.1",
+    "semgrep>=1.136.0",
+    "streamlit>=1.53.0",
+]
